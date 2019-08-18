@@ -28,7 +28,7 @@
 // to SharpAverageIR.
 
 
-// The Sahrp IR sensors are cheap but somehow unreliable. I've found that when doing continous readings to a
+// The Sharp IR sensors are cheap but somehow unreliable. I've found that when doing continous readings to a
 // fix object, the distance given oscilates quite a bit from time to time. For example I had an object at
 // 31 cm. The readings from the sensor were mainly steady at the correct distance but eventually the distance
 // given dropped down to 25 cm or even 16 cm. That's quite a bit and for some applications it is quite
