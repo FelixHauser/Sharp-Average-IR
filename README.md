@@ -8,6 +8,7 @@ See the readme.md file of the master branch (v1.0) for a little bit of backgroun
 - The distance is given as a float instead of an integer.
 - Much better way to sort out out-of-tolerance values.
 - Gives better accuracy.
+- GP2Y0A02Y and GP2Y0A710K0F sensors are also supported.
 
 # How it works
 
@@ -28,27 +29,30 @@ The distance is calculated from a formula extracted from the graphs on the senso
 Since this library takes some measurements before giving a final result, it is not as responsive as
 direct measurements.
 
-This library has the formulas to work with the GP2Y0A21Y and the GP2Y0A02YK sensors but expanding it for
-other sensors is easy enough.
+This library has the formulas to work with the GP2Y0A21Y, GP2Y0A02YK, GP2Y0A02Y and GP2Y0A710K0F sensors
+but expanding it for other sensors with similar behaviour should be easy enough.
 
 # Setting it up
 
-I won't be explaining how to copy the library into your Arduino IDE, it's well documented...
+I won't be explaining how to copy the library into your Arduino IDE, it's well documented. But you
+have to do it.
 
 #### 1. Import Library:
-    `<include "SharpAverageIR.h>`
+    <include "SharpAverageIR.h>
 
 #### 2. Initialize an object:
-   `SharpAverageIR sharp(irPin, avg, tolerance, model);`  //I called the object sharp in this example
+   `SharpAverageIR sharp(irPin, avg, tolerance, model);  //I called the object sharp in this example`
 
-     **irPin** is the Analog Pin in which the sensor is attached.
-     **avg**  is an Int representing the number of measurements it will take.
-     **tolerance** is the requested tolerance among values. It is an Int between 1 and 100. Experiment with it.
-     **model** it is an Int which represent the sensor in use.
-            use **0 or  1080** on the constructor for the GP2Y0A21Y (from 10 to 80cm)
-            use **1 or 20150** on the constructor for the GP2Y0A02Y (from 20 to 150cm)
+- **irPin** is the Analog Pin in which the sensor is attached.
+- **avg**  is an Int representing the number of measurements it will take.
+- **tolerance** is the requested tolerance among values. It is an Int between 1 and 100. Experiment with it.
+- **model** it is an Int which represent the sensor in use.
+- use **0 or  1080** on the constructor for the GP2Y0A21Y (from 10 to 80cm)
+- use **1 or 20150** on the constructor for the GP2Y0A02Y (from 20 to 150cm)
+- use **2 or  0430** on the constructor for the GP2Y0A41SK0F (from 04 to 40cm)
+- use **3 or 10550** on the constructor for the GP2Y0A710K0F (from 100 to 550cm)
 
 #### 3. Call the public method:
-   `float dis=sharp.distance();`  //this method returns a float with the distance.
+   `float dis=sharp.distance();  //this method returns a float with the distance.`
 
 Please see the example provided on this Library.

@@ -64,14 +64,26 @@ switch (caseVar) {
   case 20150:  //GP2Y0A02Y (from 20 to 150cm)  //left for legacy reasons
     puntualDistance=(61.573*pow(floatRaw, -1.1068))*NONDECIMALMULTIPLIER;
     break;
+  case 2:  //GP2Y0A02Y (from 04 to 80cm)
+    puntualDistance=(12.577*pow(floatRaw, -1.0512))*NONDECIMALMULTIPLIER;
+    break;
+  case 0430:  //GP2Y0A02Y (from 04 to 80cm)  //left for legacy reasons
+    puntualDistance=(12.577*pow(floatRaw, -1.0512))*NONDECIMALMULTIPLIER;
+    break;
+  case 3:  //GP2Y0A710K0F (from 100 to 550cm)
+      puntualDistance=(1078.4*pow(floatRaw, -2.6965))*NONDECIMALMULTIPLIER;
+    break;
+  case 100550:  //GP2Y0A710K0F (from 100 to 550cm)  //left for legacy reasons
+      puntualDistance=(1078.4*pow(floatRaw, -2.6965))*NONDECIMALMULTIPLIER;
+    break;
+
+
   default:
     //nothing to show
     break;
 }
     return puntualDistance;
 }
-
-
 
 
 
@@ -90,9 +102,7 @@ float SharpAverageIR::distance() {
 
    summ=summ/_avg;
 
-
    //we sort out the values too far from the average
-
 
    unsigned long newAverage;
    int averageCounter=0;
@@ -106,7 +116,6 @@ float SharpAverageIR::distance() {
     }
 
   }
-
 
 // we return the new average
 

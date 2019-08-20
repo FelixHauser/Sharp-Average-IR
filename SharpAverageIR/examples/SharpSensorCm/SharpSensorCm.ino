@@ -30,6 +30,8 @@ When you initialize the library object on your sketch you have to pass all the a
  ***  sensorModel is a int to differentiate the two sensor models this library currently supports:
       use 0 or  1080 on the constructor for the GP2Y0A21Y (from 10 to 80cm)
       use 1 or 20150 on the constructor for the GP2Y0A02Y (from 20 to 150cm)
+      use 2 or  0430 on the constructor for the GP2Y0A41SK0F (from 04 to 40cm)
+      use 3 or 10550 on the constructor for the GP2Y0A710K0F (from 100 to 550cm)
 
 
 3- Call the public method:
