@@ -21,109 +21,95 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA                               *
  ***********************************************************************************************************/
 
-// Update August 2019 - Please read:
-// I created this libray between the end of 2013 and beginning of 2014. I posted it on the Arduino forums
-// under another user name (not Felix Hauser). Since then aonther libray for the Sharp IR sensors has been
-// published under the same name (SharpIR). In order not to mess up 3rd party projects, I renamed my library
-// to SharpAverageIR.
-
-
-// The Sharp IR sensors are cheap but somehow unreliable. I've found that when doing continous readings to a
-// fix object, the distance given oscilates quite a bit from time to time. For example I had an object at
-// 31 cm. The readings from the sensor were mainly steady at the correct distance but eventually the distance
-// given dropped down to 25 cm or even 16 cm. That's quite a bit and for some applications it is quite
-// unacceptable. I checked the library http://code.google.com/p/gp2y0a21yk-library/ by Jeroen Doggen
-// (jeroendoggen@gmail.com) and what the author was doing is to take a bunch of readings and give an average of them
-
-// The present library works similary. It reads a bunch of readings (avg), it checks if the current reading
-// differs a lot from the previous one (tolerance) and if it doesn't differ a lot, it takes it into account
-// for the mean distance.
-// The distance is calculated from a formula extracted from the graphs on the sensors datasheets.
-// Since this library takes some measurements before giving a final result, it is not as responsive as
-// direct measurements.
-// This library has the formulas to work with the GP2Y0A21Y and the GP2Y0A02YK sensors but exanding it for
-// other sensors is easy enough.
 
 
 #include "Arduino.h"
 #include "SharpAverageIR.h"
 
-
+#define NONDECIMALMULTIPLIER 100
 
 SharpAverageIR::SharpAverageIR(int irPin, int avg, int tolerance, int sensorModel) {
 
     _irPin=irPin;
     _avg=avg;
-    _tol=tolerance/100;
+    _tol=tolerance;
     _model=sensorModel;
 
-    analogReference(DEFAULT);
+   pinMode (_irPin, INPUT);
+   analogReference(DEFAULT);
 
 }
-
-
-// When you initialize the library object on your sketch you have to pass all the above parameters:
-
-// irPin is obviously the pin where the IR sensor is attached
-// avg is the number of readings the library does
-// tolerance indicates how similar a value has to be from the last value to be taken as valid. It should be a
-//    value between 0 and 100, like a %. A value of 93 would mean that one value has to be, at least, 93% to the
-//    previous value to be considered as valid.
-// sensorModel is a int to differentiate the two sensor models this library currently supports:
-//    1080 is the int for the GP2Y0A21Y and 20150 is the int for GP2Y0A02YK. The numbers reflect the
-//    distance range they are designed for (in cm)
-
-
 
 
 int SharpAverageIR::cm() {
 
     int raw=analogRead(_irPin);
-    float voltFromRaw=map(raw, 0, 1023, 0, 5000);
+
+    float floatRaw=map(raw, 0, 1023, 0, 5000)/1000.0;
 
     int puntualDistance;
 
-    if (_model==1080) {
+int caseVar;
 
-        puntualDistance=27.728*pow(voltFromRaw/1000, -1.2045);
-
-    }else if (_model==20150){
-
-        puntualDistance=61.573*pow(voltFromRaw/1000, -1.1068);
-
-    }
-
-
+switch (caseVar) {
+  case 0:  //GP2Y0A21Y (from 10 to 80cm)
+    puntualDistance=(27.728*pow(floatRaw, -1.2045))*NONDECIMALMULTIPLIER;
+    break;
+    case 1080:  //GP2Y0A21Y (from 10 to 80cm)  //left for legacy reasons
+    puntualDistance=(27.728*pow(floatRaw, -1.2045))*NONDECIMALMULTIPLIER;
+    break;
+  case 1:  //GP2Y0A02Y (from 20 to 150cm)
+    puntualDistance=(61.573*pow(floatRaw, -1.1068))*NONDECIMALMULTIPLIER;
+    break;
+  case 20150:  //GP2Y0A02Y (from 20 to 150cm)  //left for legacy reasons
+    puntualDistance=(61.573*pow(floatRaw, -1.1068))*NONDECIMALMULTIPLIER;
+    break;
+  default:
+    //nothing to show
+    break;
+}
     return puntualDistance;
-
-
 }
 
 
 
-int SharpAverageIR::distance() {
-
-    _p=0;
-    _sum=0;
 
 
-    for (int i=0; i<_avg; i++){
+float SharpAverageIR::distance() {
 
-        int foo=cm();
+  //first, an array is populated and the average calculated
 
-        if (foo>=(_tol*_previousDistance)){
+   unsigned long summ;
 
-            _previousDistance=foo;
-            _sum=_sum+foo;
-            _p++;
+  for (int i=0; i<_avg; i++){
 
-        }
+     _rawData[i]=cm();
+      summ=summ+_rawData[i];
 
+      }
+
+   summ=summ/_avg;
+
+
+   //we sort out the values too far from the average
+
+
+   unsigned long newAverage;
+   int averageCounter=0;
+
+   for (int i=0; i<_avg; i++){
+
+     if (_rawData[i]>((_tol/100.0)*summ) && _rawData[i]<((100+(100-_tol))/100.0*summ)){
+
+       newAverage=(newAverage+_rawData[i]);
+       averageCounter++;
     }
 
+  }
 
-    int accurateDistance=_sum/_p;
 
-    return accurateDistance;
+// we return the new average
+
+return (newAverage*1.0/(averageCounter*NONDECIMALMULTIPLIER));
 
 }
