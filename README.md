@@ -3,6 +3,12 @@
 Arduino Library for Sharp IR Sensors.
 See the readme.md file of the master branch (v1.0) for a little bit of background history on this library.
 
+# What's new in v2.0
+
+- The distance is given as a float instead of an integer.
+- Much better way to sort out out-of-tolerance values.
+- Gives better accuracy.
+
 # How it works
 
 The Sharp IR sensors are cheap but somehow unreliable. I've found that when doing continuous readings to a
